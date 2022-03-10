@@ -1,0 +1,16 @@
+programa {
+	funcao inicio() 
+	    
+	    {
+		real velocidade, conv
+		velocidade=0
+		conv=0
+		
+		erro ("Informe a velocidade em Km/h: ")
+		leia(velocidade)
+		
+		conv=velocidade*1.6
+		escreva("A velocidade convertida em mi/h é: ", conv)
+		}
+		        
+		 }
