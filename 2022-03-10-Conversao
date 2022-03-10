@@ -6,7 +6,7 @@ programa {
 		velocidade=0
 		conv=0
 		
-		erro ("Informe a velocidade em Km/h: ")
+		escreva("Informe a velocidade em Km/h: ")
 		leia(velocidade)
 		
 		conv=velocidade*1.6
