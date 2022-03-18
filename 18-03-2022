@@ -1,0 +1,31 @@
+programa {
+	funcao inicio() {
+		real Mnumero1, Mnumero2, Msoma, Msubtracao, Mdivisao, Mmultiplicacao
+		
+		Mnumero1 = 0.0
+		Mnumero2 = 0.0 
+		Msubtracao = 0.0
+		Mdivisao = 0.0
+		Mmultiplicacao = 0.0
+		Msoma = 0.0
+		
+		escreva("Informe o primeiro número: ")
+		leia(Mnumero1)
+		
+		escreva("Informe o segundo número: ")
+		leia(Mnumero2)
+		
+		Msoma = Mnumero1 + Mnumero2
+		escreva ("\nO resultado da soma entre os números foi: ", Msoma)
+		
+		Msubtracao = Mnumero1 - Mnumero2
+		escreva ("\nO resultado da subtração entre os números foi: ", Msubtracao)
+		
+		Mdivisao = Mnumero1 / Mnumero2
+		escreva ("\nO resultado da divisão entre os números foi: ", Mdivisao)
+		
+		Msoma = Mnumero1 * Mnumero2
+		escreva ("\nO resultado da multiplicação entre os números foi: ", Mmultiplicacao)
+		
+	}
+}
