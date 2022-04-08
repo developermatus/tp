@@ -1,7 +1,7 @@
 programa {
     funcao inicio() {
            			// Foram inseridos os mesmos nomes para as três turmas, porém foi mantido apenas uma estrutura, simulando a mesma rotina para as demais turmas.
-        real m[2][6]    //Turma1
+        real m[30][6]    //Turma1
         real Mmedia [2]
         cadeia nome[30] = {"Ana Bárbara", "Ana Carla", "Bárbara", "Bianca", "Bruno", "Carla", "Caíque", "Débora", "Diego", "Eliana", "Ellen", "Elza", "Fábio", "Fagner", "Francisca", "Francisco", "Gabriela", "Gustavo", "Hudson", "Igor", "Ivânia", "Juliana", "Júlio", "Karla", "Leandro", "Marcos", "Maria", "Natália", "Otávio", "Yuan"}
 
@@ -37,7 +37,7 @@ programa {
          escreva("27 Natália\n")
          escreva("28 Otávio\n")
          escreva("29 Yuan\n")
-            para (inteiro x = 0; x<2; x++) {
+            para (inteiro x = 0; x<30; x++) {
             escreva ("Informe os dados do ", x+1, "º aluno [ Turma - NotaMatemática - NotaPortuguês - NotaHistória - NotaInglês - NotaFísica ]\n")
             	para (inteiro y = 0; y < 6; y++){
                	leia (m[x][y])
@@ -46,7 +46,7 @@ programa {
             }
             
         }
-			para (inteiro x = 0; x<2; x++){
+			para (inteiro x = 0; x<30; x++){
 				real soma = 0.0
 				para (inteiro y = 0; y < 6; y++){
 					soma += m[x][y]
