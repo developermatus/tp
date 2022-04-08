@@ -1,0 +1,83 @@
+programa {
+    funcao inicio() {
+           			// Foram inseridos os mesmos nomes para as três turmas, porém foi mantido apenas uma estrutura, simulando a mesma rotina para as demais turmas.
+        real m[2][6]    //Turma1
+        real Mmedia [2]
+        cadeia nome[30] = {"Ana Bárbara", "Ana Carla", "Bárbara", "Bianca", "Bruno", "Carla", "Caíque", "Débora", "Diego", "Eliana", "Ellen", "Elza", "Fábio", "Fagner", "Francisca", "Francisco", "Gabriela", "Gustavo", "Hudson", "Igor", "Ivânia", "Juliana", "Júlio", "Karla", "Leandro", "Marcos", "Maria", "Natália", "Otávio", "Yuan"}
+
+	
+         escreva ("Lista e número de chamada dos Alunos da Turma 1:\n")
+         escreva("0 Ana Bárbara\n")
+         escreva("1 Ana Carla\n")
+         escreva("2 Bárbara\n")
+         escreva("3 Bianca\n")
+         escreva("4 Bruno\n")
+         escreva("5 Carla\n")
+         escreva("6 Caíque\n")
+         escreva("7 Débora\n")
+         escreva("8 Diego\n")
+         escreva("9 Eliana\n")
+         escreva("10 Ellen\n")
+         escreva("11 Elza\n")
+         escreva("12 Fábio\n")
+         escreva("13 Fagner\n")
+         escreva("14 Francisca\n")
+         escreva("15 Francisco\n")
+         escreva("16 Gabriela\n")
+         escreva("17 Gustavo\n")
+         escreva("18 Hudson\n")
+         escreva("19 Igor\n")
+         escreva("20 Ivânia\n")
+         escreva("21 Juliana\n")
+         escreva("22 Júlio\n")
+         escreva("23 Karla\n")
+         escreva("24 Leandro\n")
+         escreva("25 Marcos\n")
+         escreva("26 Maria\n")
+         escreva("27 Natália\n")
+         escreva("28 Otávio\n")
+         escreva("29 Yuan\n")
+            para (inteiro x = 0; x<2; x++) {
+            escreva ("Informe os dados do ", x+1, "º aluno [ Turma - NotaMatemática - NotaPortuguês - NotaHistória - NotaInglês - NotaFísica ]\n")
+            	para (inteiro y = 0; y < 6; y++){
+               	leia (m[x][y])
+                
+                
+            }
+            
+        }
+			para (inteiro x = 0; x<2; x++){
+				real soma = 0.0
+				para (inteiro y = 0; y < 6; y++){
+					soma += m[x][y]
+					}
+					Mmedia[x] = soma/5
+				}
+
+				inteiro aluno
+				escreva ("Digite o número de chamada: ")
+				leia (aluno)
+				limpa()
+				cadeia aprovado
+				se (Mmedia[aluno]>=60){
+					aprovado="Aprovado"
+				}
+				senao{
+					aprovado="Reprovado"
+				}
+
+				escreva ("=======================\n")
+				escreva ("   Aluno: " +nome[aluno],"\n")
+				escreva ("-----------------------\n")
+				escreva ("   Matemática: "+m[aluno][1],"\n")
+				escreva ("    Português: "+m[aluno][2],"\n")
+				escreva ("    História: "+m[aluno][3],"\n")
+				escreva ("    Inglês: "+m[aluno][4],"\n")
+				escreva ("    Física: "+m[aluno][5],"\n")
+				escreva ("-----------------------\n")
+				escreva ("     Média : " +Mmedia[aluno],"\n")
+				escreva ("       "+aprovado,"\n")
+				escreva ("======================")
+    
+    }
+}
