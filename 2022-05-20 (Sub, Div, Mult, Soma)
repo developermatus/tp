@@ -1,0 +1,25 @@
+programa {
+	funcao inicio() {
+		
+		real num1, num2, soma, sub, div, mult
+		
+		num1 = 0
+		num2 = 0
+		
+		escreva ("Escreva o primeiro número: \n")
+		leia (num1)
+		
+		escreva ("Escreva o segundo número: \n")
+		leia (num2)
+		
+		soma = num1 + num2
+		sub = num1 - num2
+		div = num1 / num2
+		mult = num1 * num2
+		
+		escreva ("\nA soma entre os números foi: ", soma)
+		escreva ("\nA subtração entre os números foi: ", sub)
+		escreva ("\nA divisão entre os números foi: ", div)
+		escreva ("\nA multiplicação entre os números foi: ", mult)
+	}
+}
