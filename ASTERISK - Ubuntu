@@ -1,0 +1,65 @@
+# sudo apt-get update -y
+# sudo apt-get install asterisk -y
+# sudo asterisk -r
+# exit
+# cd /etc/asterisk/
+# sudo mv sip.conf sip.conf.backup
+# sudo gedit sip.conf
+  [general]
+  context=internal
+  allowguest=no
+  allowoverlap=no
+  bindport=5060
+  bindaddr=0.0.0.0
+  srvlookup=no
+  disallow=all
+  allow=ulaw
+  alwaysauthreject=yes
+  canreinvite=no
+  nat=yes
+  session-timers=refuse
+  localnet=192.168.0.0/255.255.255.0 // Colocar o endereçamento IP da rede que o asterisk foi instalado
+
+  [7001] // ramal em questão
+  type=friend
+  host=dynamic
+  secret=7001 // senha do ramal
+  context=internal
+
+  [7002]
+  type=friend
+  host=dynamic
+  secret=7002
+  context=internal
+  
+# sudo mv extensions.conf extensions.conf.backup
+# sudo gedit extensions.conf
+  [internal]
+  exten => 7001,1,Answer() // A configuração deve ser de acordo com o número do ramal em questão
+  exten => 7001,2,Dial(SIP/7001,60)
+  exten => 7001,3,Playback(vm-nobodyavail)
+  exten => 7001,4,VoiceMail(7001@main)
+  exten => 7001,5,Hangup()
+
+  exten => 7002,1,Answer()
+  exten => 7002,2,Dial(SIP/7002,60)
+  exten => 7002,3,Playback(vm-nobodyavail)
+  exten => 7002,4,VoiceMail(7001@main)
+  exten => 7002,5,Hangup()
+
+  exten => 8001,1,VoicemailMain(7001@main)
+  exten => 8001,2,Hangup()
+
+  exten => 8002,1,VoicemailMain(7002@main)
+  exten => 8002,2,Hangup()
+
+# sudo mv voicemail.conf voicemail.conf.backup
+# sudo gedit voicemail.conf
+  [main]
+  7001 => 7001
+  7002 => 7002
+
+# sudo asterisk -r
+# reload
+# sudo asterisk -r
+# sip show peers
