@@ -1,3 +1,5 @@
+// https://sites.google.com/a/barreto.eti.br/junior/configurando-nfs--nis
+
 1° passo:
 
 Baixar o pacote nfs-kernel-server utilizando o comando:
