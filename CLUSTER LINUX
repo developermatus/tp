@@ -1,0 +1,309 @@
+1° passo:
+
+Baixar o pacote nfs-kernel-server utilizando o comando:
+
+# apt-get install nfs-kernel-server
+
+Estando como root no shell.
+
+2° passo:
+
+Definir qual pasta será compartilhada pela rede. Para isso é necessário editar o arquivo /etc/exports. Estando como root, no shell, digite:
+
+# nano /etc/exports
+
+E pressione "enter". Deverá ser mostrado um arquivo que poderá estar vazio ou cheio de comentários como estes:
+
+# /etc/exports: the access control list for filesystems which may be exported
+#               to NFS clients.  See exports(5).
+#
+# Example for NFSv2 and NFSv3:
+# /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+#
+# Example for NFSv4:
+# /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+# /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+#
+
+Os comentários são definidos quando, no início da linha, aparece um "#", que diz que tudo que vem após ele é um comentário e não deverá ser levado em conta pelo sistema. Bem, dentro deste arquivo basta inserirmos no final dele o diretório que desejamos compartilhar e que tipo de acesso permitiremos dentro do mesmo.
+
+Ficará assim:
+
+/diretório_a_ser_compartilhado tipo_de_acesso_permitido
+
+Exemplo:
+
+/home/ *(rw,sync,no_root_squash)
+
+Obs.: "*" (asterisco) define que todos da rede terão permissão de acesso ao diretório. "rw" poderão ler, gravar e apagar o conteúdo do diretório no_root_squash, o root do servidor também poderá se logar remotamente.
+
+Para definir apenas alguns usuários específicos a terem permissão de acesso ao compartilhamento, basta que no lugar do "*" seja colocado o IP da máquina que você deseja que tenha acesso aos arquivos. Se desejar somente leitura, no lugar de "rw" coloque "ro". Feito sua configuração basta salvar o arquivo pressionar "Esc", depois ":" (dois pontos) e digitar "wq", por fim pressione "enter".
+
+3° passo:
+
+Estando ainda no shell, como root, vá ao diretório /etc/init.d e dentro dele digite:
+
+# ./nfs-kernel-server start
+
+Isso iniciará o servidor com nossas configurações preestabelecidas, deixando-o pronto para compartilhar a pasta que definimos, bem como as máquinas que poderão acessá-la.
+
+Configurando o cliente NFS
+
+Agora que já temos um servidor NFS configurado e rodando, devemos definir no(s) cliente(s) quais máquinas na rede estão cedendo o direito de acessar arquivos, pastas, dispositivos etc.
+
+Para isso teremos dois simples passos a seguir.
+
+1° passo:
+
+Instalar o pacote nfs-common no(s) cliente(s) digitando:
+
+# apt-get install nfs-common
+
+2° passo:
+
+Após instalado o pacote nfs-common no cliente, existem duas formas de fazer a configuração. Uma é fazer de forma que ela só irá funcionar naquela hora e depois que o computador for desligado não irá mais funcionar; e outra é uma forma permanente.
+
+Primeira forma:
+
+Basta, estando no shell, como root, digitarmos o comando mount seguido do IP do servidor mais o diretório que ele está nos cedendo e definirmos em qual lugar no nosso computador montaremos, ou seja, criar o link que nos direcionará para o diretório que está no servidor em algum lugar na rede... Fascinante, hauhauah.
+
+Exemplo:
+
+# mount 192.168.10.101:/home /home
+
+Traduzindo... ;-)
+
+Estou dizendo que quero que no meu home seja montado o acesso ao diretório /home que está na máquina 192.168.10.101 da rede.
+
+Obs.: Esta foi a forma que, ao reiniciar o computador, este ponto de montagem desaparecerá, sendo necessário remontá-lo novamente.
+
+Segunda forma:
+
+Estando no shell, como root, digite:
+
+# nano /etc/fstab
+
+Dentro do arquivo aparecerá algo semelhante a isto:
+
+# /etc/fstab: static file system information.
+#
+# Use 'vol_id --uuid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# 
+proc            /proc           proc    defaults        0       0
+/host/ubuntu/disks/root.disk /               ext3    loop,errors=remount-ro 0       1
+/host/ubuntu/disks/boot /boot           none    bind            0       0
+/host/ubuntu/disks/swap.disk none            swap    loop,sw         0       0
+/dev/scd0       /media/cdrom0   udf,iso9660 user,noauto,exec,utf8 0       0
+
+No final do arquivo basta adicionarmos uma linha com o IP do servidor mais o diretório que ele está nos cedendo acesso e mais algumas configurações, ficando assim:
+
+192.168.10.101:/home      /home     nfs   rw,bg,tcp,user,auto  0       0
+
+Feito sua configuração, basta salvar o arquivo. Pressione "Esc", depois dois pontos ":" e digite "wq" e aperte "Enter". Onde estamos dizendo ao sistema o seguinte: toda vez que o computador for ligado execute a montagem do diretório do servidor no meu home, assim essa configuração nunca desaparecerá quando desligarmos o PC. ;-)
+
+Muito bom para não termos que dar o mount toda hora.
+
+Configurando o servidor NIS
+
+Significado do NIS
+NIS é Network Information Service (serviço de informação de rede). Mantém informações administrativas da rede na forma de domínios, possibilitando aos usuários terem acesso à suas contas em qualquer máquina da rede. Para que seus arquivos sejam centralizados de forma que sejam acessados de qualquer lugar, utiliza-se o NFS, que exporta os arquivos do servidor para qualquer máquina onde exista um usuário que tenha o direito a estes arquivos.
+
+Função do NIS
+No GNU/Linux, como em qualquer outro sistema operacional, existe a possibilidade de realizar logon (autenticação) remoto. Para isso o NIS servidor tem a função de informar aos clientes NIS da rede os usuários disponíveis no servidor para serem logados remotamente. Assim, quando um cliente NIS envia uma solicitação para um servidor NIS, ele verifica se o usuário e a senha estão corretos, caso não estejam, ele rejeita a autenticação, caso estejam corretos ele devolve para aquele terminal todas os programas, arquivos e configurações daquele usuário como se ele tivesse na sua máquina real.
+
+Configurando o servidor NIS
+A configuração do NIS no servidor consiste de onze simples passos.
+
+1° passo:
+
+Baixar o pacote nis e o portmap utilizando o comando:
+
+# apt-get install portmap
+
+Depois:
+
+# apt-get install nis
+
+Geralmente no Ubuntu Desktop 9.04 o portmap já vem instalado.
+
+2° passo:
+
+Após baixado o pacote NIS ele será executado e apresentará a seguinte mensagem:
+
+"Você precisa agora escolher o nome de domínio NIS para seu sistema.
+Se você quer que esta máquina seja apenas um cliente, informe o nome
+de domínio NIS de sua rede."
+
+Ele pode sugerir um nome. Você deve excluir e deixar em branco, depois basta pressionar "enter".
+
+3° passo:
+
+Vamos editar o arquivo /etc/hosts utilizando o vi colocando o seguinte conteúdo no final do arquivo:
+
+192.168.10.101    server.rede.br    server
+
+Obs.: Como sempre, utilizando o IP do seu servidor, não o do exemplo. Huahauha...
+
+Feito isso salve o arquivo.
+
+4° passo:
+
+Vamos editar o arquivo /etc/defaultdomain utilizando o vi colocando o seguinte conteúdo no final do arquivo:
+
+rede.br
+
+Feito isso salve o arquivo.
+
+5° passo:
+
+Vamos editar o arquivo /etc/ypserv.securenets utilizando o vi, colocando o seguinte conteúdo no final do arquivo:
+
+255.255.255.0 192.168.10.0
+
+Obs.: Como sempre, utilizando a sua faixa de IP e máscara de rede.
+
+Feito isso salve o arquivo.
+
+6° passo:
+
+Vamos editar o arquivo /etc/default/nis utilizando o vi. Altere os seguintes campos do arquivo:
+
+NISSERVER=false
+
+Para:
+
+NISSERVER=master
+
+Estaremos dizendo que essa máquina, de fato, será o servidor quando alteramos este campo. Altere o campo:
+
+NISCLIENT=true
+
+Para:
+
+NISCLIENT=false
+
+Estaremos dizendo que essa máquina não é um cliente quando alteramos este campo.
+
+Obs.: Dentro do arquivo existem mais campos, mas não mexa neles.
+
+Feito isso salve o arquivo.
+
+7° passo:
+
+Estando tudo configurado e os arquivos bem editados, precisamos parar e iniciar o serviço. Para isso, dentro do diretório /etc/init.d/, digite:
+
+# ./nis stop
+
+E depois que ele parar o serviço digite:
+
+# ./nis start
+
+8° passo:
+
+Agora que o serviço foi iniciado precisamos criar os mapas e validar as configurações do servidor. Para tal, entre no diretório /usr/lib/yp e digite o seguinte comando:
+
+# ./ypinit -m
+
+Feito isso ele irá perguntar qual máquina rodará o servidor, basta digitar o nome da máquina servidor, no meu caso lab1-pc01 e apertar "Control + D".
+
+9° passo:
+
+Precisamos editar o arquivo /etc/ypserv.conf, onde adicionaremos no final do mesmo as seguintes informações:
+
+dns: no
+files: 30
+slp: no
+xfr_check_port: yes
+
+Feito isso salve o arquivo.
+
+10° passo:
+
+Edite o arquivo /etc/yp.conf adicionando a seguinte linha ao final do arquivo:
+
+ypserver 192.168.10.101
+
+Obs.: Este IP é do meu servidor, você deve colocar o IP do seu servidor.
+
+Feito isso salve o arquivo.
+
+11° passo:
+
+Edite o arquivo /var/yp/Makefile alterando os campos:
+
+MERGE_PASSWD=true
+MERGE_GROUP=true
+
+Para:
+
+MERGE_PASSWD=false
+MERGE_GROUP=false
+
+Feito isso salve o arquivo.
+
+Assim que todas essas configurações estiverem realizadas você pode começar a criar os usuários. Após cada usuário criado basta ir no diretório /var/yp e executar o comando make, isso garantirá sua base de dados de usuários atualizada para que todos os terminais clientes possam logar no servidor utilizando seu usuário.
+
+Dica: É sempre bom, depois de muitas configurações, desligar e ligar novamente o computador, mesmo que o sistema nos permita reiniciar ou parar manualmente os serviços.
+
+Configurando o cliente NIS
+
+A configuração do NIS no cliente consiste de cinco simples passos:
+
+1° passo:
+
+Baixar o pacote nis e o portmap utilizando o comando:
+
+# apt-get install portmap
+
+Depois:
+
+# apt-get install nis
+
+Geralmente no Ubuntu Desktop 9.04 o portmap já vem instalado.
+
+2° passo:
+
+Após baixado o pacote nis, ele será executado e apresentará a seguinte mensagem:
+
+"Você precisa agora escolher o nome de domínio NIS para seu sistema.
+Se você quer que esta máquina seja apenas um cliente, informe o nome 
+de domínio NIS de sua rede."
+
+Ele pode sugerir um nome, você deve excluir e deixar em branco, depois basta pressionar "enter".
+
+3° passo:
+
+Vamos editar o arquivo /etc/defaultdomain utilizando o vi colocando o seguinte conteúdo no final do arquivo:
+
+rede.br
+
+Feito isso salve o arquivo.
+
+4° passo:
+
+Agora precisamos editar o arquivo /etc/yp.conf acrescentando a seguinte linha:
+
+ypserver 192.168.10.101
+
+Feito isso salve o arquivo.
+
+5° passo:
+
+Depois de tudo configurado, só falta adicionarmos um "+" aos seguintes arquivos: passwd, group, shadow e gshadow, que são encontrados no diretório /etc/.
+
+Para isso basta, estando no diretório /etc, executar os seguintes comandos:
+
+# echo + >> /etc/passwd
+# echo + >> /etc/group
+# echo + >> /etc/shadow
+# echo + >> /etc/gshadow
+
+Onde o echo manda imprimir o "+" e os dois maiores ">>" dizem que o "+", do echo, ao invés de ser impresso na tela, deve ser impresso no final do arquivo.
+
+Feito essas configurações reinicie o computador.
+
+Conclusão
+Se caso todos esses passos tiverem sido seguidos atentamente e você, estando certo de que seu sistema não tem nenhum erro, bem como sua configuração de rede estiver certinha, isso lhe garantirá um servidor de arquivos e de autenticação de usuário seguro e clientes aptos a acessá-lo.
